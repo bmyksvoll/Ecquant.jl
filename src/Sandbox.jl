@@ -7,7 +7,7 @@ using Plots
 using Polynomials
 
 include("forwardcurve.jl")
-include("smoothspline.jl")
+
 
 trade_date = DateTime(2021, 6, 17)
 

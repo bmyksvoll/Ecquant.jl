@@ -1,6 +1,6 @@
-using EquinorCommodityQuant
+using Ecquant
 using Test
 
-@testset "EquinorCommodityQuant.jl" begin
+@testset "Ecquant.jl" begin
     # Write your tests here.
 end

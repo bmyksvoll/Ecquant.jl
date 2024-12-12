@@ -1,6 +1,6 @@
-name = "EquinorCommodityQuant"
+name = "Ecquant"
 uuid = "c4e2bc85-6b8e-40be-a6eb-cfea8c73ef5a"
-authors = ["your-name"]
+authors = ["Bjarte Myksvoll"]
 version = "1.0.0-DEV"
 
 [deps]

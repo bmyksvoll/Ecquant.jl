@@ -1,4 +1,5 @@
-module EquinorCommodityQuant
+module Ecquant
+
 
 # Write your package code here.
 
