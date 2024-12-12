@@ -28,7 +28,7 @@ struct ForwardCurve
 		# Create a sorted vector of unique days from both start_day and end_day
 		#knots = [0; sort(unique(vcat(instruments.start_day, instruments.end_day)))]
 
-		spline = SmoothSpline(instruments.start_day, instruments.end_day, instruments.price)
+		spline = SmoothSpline(instruments.start_time, instruments.end_time, instruments.price)
 		new(unit, currency, trade_date, instruments, spline)
 	end
 end

@@ -7,8 +7,8 @@ using BlockDiagonals
 
 
 struct SmoothSpline
-	taus::Vector{Tuple{Int, Int}}
-	knots::Vector{Int}
+	taus::Vector{Tuple{Float64, Float64}}
+	knots::Vector{Float64}
 	prices::Vector{Float64}
 	n::Int
 	m::Int
@@ -19,7 +19,7 @@ struct SmoothSpline
 	X::Matrix{Float64}
 
 	# Inner constructor initializes only a subset of the fields
-	function SmoothSpline(tau_begin::Vector{Int}, tau_end::Vector{Int}, prices::Vector{Float64})
+	function SmoothSpline(tau_begin::Vector{Float64}, tau_end::Vector{Float64}, prices::Vector{Float64})
 
 		# Create a vector of tuples representing the start and end days
 		taus = collect(zip(tau_begin, tau_end))
@@ -38,8 +38,8 @@ struct SmoothSpline
 		# Solve problem
 		X = solve_lineq(n, H, A, B)
 		# Set up polynomials from solution X
-		polys = [Polynomial(reverse(coeffs), :t) for coeffs in eachrow(X)]
-		new(taus, knots, prices, n, m, polys, H, A, B, X)
+		polynomials = [Polynomial(reverse(coeffs), :t) for coeffs in eachrow(X)]
+		new(taus, knots, prices, n, m, polynomials, H, A, B, X)
 	end
 end
 
@@ -57,7 +57,7 @@ function calculate_polynomial_value(spline::SmoothSpline, times::Vector{Int})
 end =#
 
 # Calculate spline average
-function average_price(spline::SmoothSpline, start_day::Int, end_day::Int)
+function average_price(spline::SmoothSpline, start_day::Float64, end_day::Float64)
 	if start_day > end_day
 		error("Start is after end")
 	end
@@ -83,7 +83,7 @@ end
 
 
 # Calculate H matrix
-function calc_H(tau_b::Int, tau_e::Int)
+function calc_H(tau_b::Float64, tau_e::Float64)
 	return [
 		(144/5)*(tau_e^5-tau_b^5) 18*(tau_e^4-tau_b^4) 8*(tau_e^3-tau_b^3) 0 0;
 		18*(tau_e^4-tau_b^4) 12*(tau_e^3-tau_b^3) 6*(tau_e^2-tau_b^2) 0 0;
@@ -100,7 +100,7 @@ function calc_big_H(knots, n)
 end
 
 # Calculate integral constraint
-function calc_integral_constraint(tau_b::Int, tau_e::Int)
+function calc_integral_constraint(tau_b::Float64, tau_e::Float64)
 	return [
 		(tau_e^5 - tau_b^5) / 5
 		(tau_e^4 - tau_b^4) / 4
@@ -111,7 +111,7 @@ function calc_integral_constraint(tau_b::Int, tau_e::Int)
 end
 
 # Calculate knot constraints
-function calc_knot_constraints(u_j::Int)
+function calc_knot_constraints(u_j::Float64)
 	return [
 		u_j^4 u_j^3 u_j^2 u_j 1;
 		4*u_j^3 3*u_j^2 2*u_j 1 0;
@@ -185,10 +185,10 @@ function plot_spline(spline::SmoothSpline, resolution::Int = 1000)
 	end
 
 	# Iterate over the start_date, end_date, and price using zip and enumerate
-	for (i, (start_day, end_day, price)) in enumerate(zip(instruments.start_day, instruments.end_day, instruments.price))
+	for (i, (start_time, end_time, price)) in enumerate(zip(instruments.start_time, instruments.end_time, instruments.price))
 		name = instruments.name[i]
 		# Plot a horizontal line for the price of the instrument
-		plot!(plt, [start_day, end_day], [price, price], label = name, lw = 2)
+		plot!(plt, [start_time, end_time], [price, price], label = name, lw = 2)
 	end
 
 	# Display the plot
