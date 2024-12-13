@@ -1,14 +1,10 @@
-# %%
-
-using Dates
-using DataFrames
-using XLSX
 using Plots
-using Polynomials
-using CSV
+using Random
+using Distributions
 
+include("volatility.jl")
 include("forwardcurve.jl")
-
+include("simulation.jl")
 
 trade_date = DateTime(2021, 6, 17)
 
@@ -29,21 +25,24 @@ instruments = DataFrame([
 
 
 # Create an instance of ForwardCurve
-forward_curve = ForwardCurve("USD", "MWh", trade_date, instruments)
+fc = ForwardCurve("USD", "MWh", trade_date, instruments)
 
-plot_curve(forward_curve)
+T = 1.5  # Total time in years
+dt = 1/365  # Daily time step
+tau = 1/52
+times = 0:dt:T-dt   # Time steps
 
-# Apply the average_price function to each set of start_time, end_time, and price using broadcasting
-instruments.calc_price = price.(Ref(forward_curve.spline), instruments.start_time, instruments.end_time)
+# Assuming fc is an instance with a method calc_smooth_price
+term_structure_initial = price.(Ref(fc), times)
 
-all(isapprox.(instruments.price, instruments.calc_price, atol=1e-10))
+# Create an instance of the Simulation class
+vol = BSRModel()
+sim = Simulation(100, tau, vol, term_structure_initial, times)
 
-all(instruments.price .== instruments.calc_price)
+# Run the simulation
+sim_curves = run_simulation(sim)
 
-# Iterate over the start_date, end_date, and price using zip and enumerate
-for (i, (start_time, end_time, price)) in enumerate(zip(instruments.start_time, instruments.end_time, instruments.price))
-	calc_price = average_price(forward_curve.spline, start_time, end_time)
-	println(calc_price)
-end
+# Plot the initial term structure
+plot(times, term_structure_initial, color=:black, lw=2, label="Term Structure")
 
-#XLSX.writetable("X_mat.xlsx", X_df)
+plot!(times, sim_curves', lw=0.1, legend=false, color=:blue, alpha=0.5)

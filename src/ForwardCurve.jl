@@ -3,6 +3,7 @@ using Dates
 using Plots
 using LinearAlgebra
 using Polynomials
+using DataFrames
 
 include("smoothspline.jl")
 
@@ -33,6 +34,9 @@ struct ForwardCurve
 	end
 end
 
+function price(forward_curve::ForwardCurve, times::Float64)
+	price(forward_curve.spline, times)
+end
 
 function plot_curve(forward_curve::ForwardCurve)
 	plot_spline(forward_curve.spline)

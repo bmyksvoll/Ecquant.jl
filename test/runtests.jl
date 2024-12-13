@@ -1,5 +1,9 @@
 using Ecquant
 using Test
+using Dates
+using DataFrames
+using Ecquant
+
 
 @testset "Ecquant.jl" begin
     # Write your tests here.

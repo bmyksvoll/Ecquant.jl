@@ -24,7 +24,7 @@ struct SmoothSpline
 		# Create a vector of tuples representing the start and end days
 		taus = collect(zip(tau_begin, tau_end))
 
-		# Create a sorted vector of unique days from both start_day and end_day
+		# Create a sorted vector of unique days from both start_time and end_time
 		knots = [0; sort(unique(vcat(tau_begin, tau_end)))]
 
 		n = length(knots) - 1
@@ -44,33 +44,31 @@ struct SmoothSpline
 end
 
 
-#= 
-# Calculate polynomial point values
-function calculate_polynomial_value(spline::SmoothSpline, times::Vector{Int})
-	prices = zeros(Float64, length(times))
-	for (i, interval) in enumerate(polynomial_intervals)
-		start_time, end_time = interval
-		mask = (times .>= start_time) .& (times .<= end_time)
-		prices[mask] .= [polynomial_function(time, X[i]) for time in times[mask]]
-	end
-	return prices
-end =#
+
+function price(spline::SmoothSpline, time::Float64)
+    for (i, poly) in enumerate(spline.polynomials)
+        if spline.knots[i] <= time < spline.knots[i+1]
+            return poly(time)
+        end
+    end
+    error("Time $time is outside the range of the spline")
+end
 
 # Calculate spline average
-function average_price(spline::SmoothSpline, start_day::Float64, end_day::Float64)
-	if start_day > end_day
+function price(spline::SmoothSpline, start_time::Float64, end_time::Float64)
+	if start_time > end_time
 		error("Start is after end")
 	end
 
-	if start_day < spline.knots[1] || end_day > spline.knots[end]
+	if start_time < spline.knots[1] || end_time > spline.knots[end]
 		error("Integration bounds are outside the range of the spline")
 	end
 
 	total_integral = 0.0
-	total_duration = end_day - start_day
+	total_duration = end_time - start_time
 	for (i, poly) in enumerate(spline.polynomials)
-		segment_start = max(start_day, spline.knots[i])
-		segment_end = min(end_day, spline.knots[i+1])
+		segment_start = max(start_time, spline.knots[i])
+		segment_end = min(end_time, spline.knots[i+1])
 
 		if segment_start < segment_end
 			segment_integral = integrate(poly, segment_start, segment_end)

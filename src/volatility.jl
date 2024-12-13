@@ -82,9 +82,9 @@ function sigma_factor2(model::BSRModel, t::Float64, tau::Float64, T::Float64)
     return sqrt(variance)
 end
 
-function sigma_factor3(model::BSRModel, T::Float64)
+function sigma_factor3(model::BSRModel, T)
     """Third factor volatility"""
-    return fill(model.c, length(T))
+    return model.c
 end
 
 function first_factor_integral(model::BSRModel, s::Float64, T::Float64)
