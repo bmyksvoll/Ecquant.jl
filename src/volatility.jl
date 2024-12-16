@@ -96,3 +96,4 @@ function second_factor_integral(model::BSRModel, s::Float64, T::Float64)
     """Second volatility factor integral function"""
     return -2 * model.a * model.c * log(T - s + model.b)
 end
+

@@ -3,11 +3,11 @@ struct Simulation
     n_sims::Int
     tau::Float64
     vol::BSRModel
-    term_structure_initial::Vector{Float64}
+    fc::ForwardCurve
     times::Vector{Float64}
 end
 
-function run_simulation(sim::Simulation)
+function simulate_shocks(sim::Simulation)
     # Generate independent random samples
     w = randn(sim.n_sims, 3)
 
@@ -21,6 +21,5 @@ function run_simulation(sim::Simulation)
 
     Z = z1 .* z2 .* z3
 
-    sim_curves = Z .* sim.term_structure_initial'
-    return sim_curves
+    return Z
 end

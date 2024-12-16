@@ -1,6 +1,8 @@
+using XLSX
 using Plots
 using Random
 using Distributions
+using Statistics
 
 include("volatility.jl")
 include("forwardcurve.jl")
@@ -23,12 +25,11 @@ instruments = DataFrame([
 	(isActive = true, name = "Q4-22", start_date = DateTime(2022, 10, 1), end_date = DateTime(2023, 1, 1), price = 29.5),
 ])
 
-
 # Create an instance of ForwardCurve
 fc = ForwardCurve("USD", "MWh", trade_date, instruments)
 
 T = 1.5  # Total time in years
-dt = 1/365  # Daily time step
+dt = 1/52  # time step
 tau = 1/52
 times = 0:dt:T-dt   # Time steps
 
@@ -36,13 +37,40 @@ times = 0:dt:T-dt   # Time steps
 term_structure_initial = price.(Ref(fc), times)
 
 # Create an instance of the Simulation class
-vol = BSRModel()
-sim = Simulation(100, tau, vol, term_structure_initial, times)
+a = 0.26
+b = 0.33
+c = 0.1
+
+# Initialize the model
+
+
+vol = BSRModel(a,b,c)
+
+sim = Simulation(100, tau, vol,fc, times)
 
 # Run the simulation
-sim_curves = run_simulation(sim)
+shocks = simulate_shocks(sim)
+
+term_structure_initial = price.(Ref(fc), times)
+
+sim_curves = shocks .* term_structure_initial'
 
 # Plot the initial term structure
-plot(times, term_structure_initial, color=:black, lw=2, label="Term Structure")
+plot(times, term_structure_initial, color=:blue, lw=2, label="Term Structure")
 
 plot!(times, sim_curves', lw=0.1, legend=false, color=:blue, alpha=0.5)
+
+
+log_returns[1,1:end]
+
+#XLSX.writetable("shocks.xlsx", DataFrame(shocks, :auto))
+
+log_returns = log.(shocks[:,2:end]./shocks[:,1:end-1])
+std_log_returns = std(log_returns, dims=1)*sqrt(1/tau)
+
+# Plot the standard deviations of log returns
+plot(times[2:end],std_log_returns', color=:red, lw=2)
+plot!(times, sigma.(Ref(vol), 0.0, tau, times))
+
+# ...existing code...
+
