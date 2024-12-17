@@ -25,52 +25,46 @@ instruments = DataFrame([
 	(isActive = true, name = "Q4-22", start_date = DateTime(2022, 10, 1), end_date = DateTime(2023, 1, 1), price = 29.5),
 ])
 
+# initial
+t = 0.0
+T = 1.5  # Total time in years
+tau = 1/52
+dt = tau  # time step
+
+times = tau:dt:T   # Time steps
+times_tau = times .+ tau
+
 # Create an instance of ForwardCurve
 fc = ForwardCurve("USD", "MWh", trade_date, instruments)
-
-T = 1.5  # Total time in years
-dt = 1/52  # time step
-tau = 1/52
-times = 0:dt:T-dt   # Time steps
-
 # Assuming fc is an instance with a method calc_smooth_price
 term_structure_initial = price.(Ref(fc), times)
 
-# Create an instance of the Simulation class
+# Initialize the volatility model
 a = 0.26
 b = 0.33
 c = 0.1
 
-# Initialize the model
+vol_model = BSRModel(a,b,c)
+vol = σ.(Ref(vol_model), t, tau, times)
 
+# Create an instance of the Simulation class
+nsim = 1000
+sim = BSRSimulation(nsim, t, tau, vol_model, fc, times)
 
-vol = BSRModel(a,b,c)
-
-sim = Simulation(100, tau, vol,fc, times)
-
-# Run the simulation
-shocks = simulate_shocks(sim)
-
-term_structure_initial = price.(Ref(fc), times)
-
+# Run singlefactor simulation
+shocks = simulate_singlefactor(sim)
 sim_curves = shocks .* term_structure_initial'
 
 # Plot the initial term structure
 plot(times, term_structure_initial, color=:blue, lw=2, label="Term Structure")
+plot!(times, sim_curves', lw=0.1, legend=false, alpha=0.5)
 
-plot!(times, sim_curves', lw=0.1, legend=false, color=:blue, alpha=0.5)
+# Validate consistency between the volatility model and the simulation volatility
+vol_sim = vec(std(log.(shocks), dims=1) * sqrt(1/tau))
 
+# Plot input and simulated volatility
+plot(times, vol, lw=1, legend=false)
+plot!(times, vol_sim, lw=2, color=:red, alpha = 0.5, label="Simulated Volatility")
 
-log_returns[1,1:end]
-
-#XLSX.writetable("shocks.xlsx", DataFrame(shocks, :auto))
-
-log_returns = log.(shocks[:,2:end]./shocks[:,1:end-1])
-std_log_returns = std(log_returns, dims=1)*sqrt(1/tau)
-
-# Plot the standard deviations of log returns
-plot(times[2:end],std_log_returns', color=:red, lw=2)
-plot!(times, sigma.(Ref(vol), 0.0, tau, times))
-
-# ...existing code...
+all(isapprox.(vol, vol_sim, atol=1E-3))
 

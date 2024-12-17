@@ -27,7 +27,6 @@ instruments = DataFrame([
 	(isActive = true, name = "Q4-22", start_date = DateTime(2022, 10, 1), end_date = DateTime(2023, 1, 1), price = 29.5),
 ])
 
-
 # Create an instance of ForwardCurve
 forward_curve = ForwardCurve("USD", "MWh", trade_date, instruments)
 
@@ -38,12 +37,5 @@ instruments.calc_price = price.(Ref(forward_curve.spline), instruments.start_tim
 
 all(isapprox.(instruments.price, instruments.calc_price, atol=1e-10))
 
-all(instruments.price .== instruments.calc_price)
-
-# Iterate over the start_date, end_date, and price using zip and enumerate
-for (i, (start_time, end_time, price)) in enumerate(zip(instruments.start_time, instruments.end_time, instruments.price))
-	calc_price = average_price(forward_curve.spline, start_time, end_time)
-	println(calc_price)
-end
 
 #XLSX.writetable("X_mat.xlsx", X_df)

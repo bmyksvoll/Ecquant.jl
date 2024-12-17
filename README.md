@@ -27,6 +27,10 @@ This package is based on the brilliant work of of others:
 - Joachim Blaafjell Holwech, notably his Curvy https://github.com/equinor/curvy package. For a tutorial see https://holwech.github.io/blog/curvy/. 
 
 
+# Workflow
+
+https://modernjuliaworkflows.org/
+
 # Contribution
 Bugs or suggestions? Please don't hesitate to post an issue on it!
 

@@ -25,8 +25,14 @@ struct ForwardCurve
 	end
 end
 
+# Calculate price for a given time
 function price(forward_curve::ForwardCurve, times::Float64)
 	price(forward_curve.spline, times)
+end
+
+# Calculate price for a given time interval
+function price(forward_curve::ForwardCurve, start_time::Float64, end_time::Float64)
+	price(forward_curve.spline, start_time, end_time)
 end
 
 function plot_curve(forward_curve::ForwardCurve)
