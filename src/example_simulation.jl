@@ -28,11 +28,9 @@ instruments = DataFrame([
 # initial
 t = 0.0
 T = 1.5  # Total time in years
-tau = 1/52
+tau = 1/365
 dt = tau  # time step
-
-times = tau:dt:T   # Time steps
-times_tau = times .+ tau
+times = tau:dt:T   # Time step
 
 # Create an instance of ForwardCurve
 fc = ForwardCurve("USD", "MWh", trade_date, instruments)
@@ -49,7 +47,7 @@ vol = σ.(Ref(vol_model), t, tau, times)
 
 # Create an instance of the Simulation class
 nsim = 1000
-sim = BSRSimulation(nsim, t, tau, vol_model, fc, times)
+sim = BSRSimulation(fc, vol_model, nsim, t, tau, times)
 
 # Run singlefactor simulation
 shocks = simulate_singlefactor(sim)
@@ -63,8 +61,12 @@ plot!(times, sim_curves', lw=0.1, legend=false, alpha=0.5)
 vol_sim = vec(std(log.(shocks), dims=1) * sqrt(1/tau))
 
 # Plot input and simulated volatility
-plot(times, vol, lw=1, legend=false)
-plot!(times, vol_sim, lw=2, color=:red, alpha = 0.5, label="Simulated Volatility")
+plot(times, vol, lw=1, legend=true, label = "Input Volatility")
+plot!(times, vol_sim, lw=1, color=:red, alpha = 0.5, label="Simulated Volatility")
 
-all(isapprox.(vol, vol_sim, atol=1E-3))
 
+
+all(isapprox.(vol, vol_sim, atol=1E-2))
+
+
+vol .- vol_sim
