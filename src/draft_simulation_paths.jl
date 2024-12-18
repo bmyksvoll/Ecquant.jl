@@ -21,10 +21,16 @@ c = 0.1
 vol_model = BSRModel(a,b,c)
 
 n_steps = length(times)
-n_sims = 1000
-
-w = randn(n_sims, n_steps)
+n_sims = 10000
 f = σ.(Ref(vol_model), t, tau, times)
+
+# Set a seed for reproducibility
+seed = 1234
+rng = MersenneTwister(seed)
+
+# Generate independent random samples
+w = randn(rng, n_sims, n_steps)
+
 
 # Initialize the paths matrix
 #Z = zeros(n_sims, n_steps)
@@ -43,13 +49,12 @@ plot(times, P', lw=0.2, legend=false, alpha=0.6)
 vol_sim = std(log.(P), dims=1) * sqrt(1/tau)
 plot(times, vol_sim')
 
+# NEED TO CHECK  TIME INDEX CONSISTENCY BETWEEN PLUG-IN AND SIMULATION
 # Calculate plug-in volatility
-plugin_vol = σ.(Ref(vol_model), t, times.-0.01, times,times.+0.01)
-plot(times, plugin_vol)
+plugin_vol = σ.(Ref(vol_model), t, times.-0.01, times,times.+0.001)
+plot(times.+tau, plugin_vol, lw=2, label="Plug-in Volatility")
 
-scaler = sqrt.(1.0./times)
-
-vol_sim = std(log.(P), dims=1) .* scaler'
-plot!(times, vol_sim')
+vol_sim = std(log.(P), dims=1) .* sqrt.(1.0./times)'
+plot!(times, vol_sim', lw=2, label="Simulation Volatility")
 
 
