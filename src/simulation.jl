@@ -46,8 +46,9 @@ function simulate_singlefactor_path(sim::BSRPathSimulation)
 
     f = σ.(Ref(sim.vol), sim.t, sim.tau, sim.times)
 
+    
     Z = exp.(w * sqrt(sim.tau) .* f' .- 0.5 .* f'.^2 .* sim.tau)
-
+    
     cumZ = cumprod(Z, dims=2)
 
     return cumZ

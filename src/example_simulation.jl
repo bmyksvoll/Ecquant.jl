@@ -1,7 +1,7 @@
 using XLSX
 using Plots
 using Random
-using Distributions
+#using Distributions
 using Statistics
 
 include("volatility.jl")
@@ -28,7 +28,7 @@ instruments = DataFrame([
 # initial
 t = 0.0
 T = 1.5  # Total time in years
-tau = 1/365
+tau = 1/52
 dt = tau  # time step
 times = tau:dt:T   # Time step
 
@@ -64,9 +64,25 @@ vol_sim = vec(std(log.(shocks), dims=1) * sqrt(1/tau))
 plot(times, vol, lw=1, legend=true, label = "Input Volatility")
 plot!(times, vol_sim, lw=1, color=:red, alpha = 0.5, label="Simulated Volatility")
 
-
-
 all(isapprox.(vol, vol_sim, atol=1E-2))
 
+# Run multi-factor simulation
 
-vol .- vol_sim
+shocks = simulate_multifactor(sim)
+sim_curves = shocks .* term_structure_initial'
+
+# Plot the initial term structure
+plot(times, term_structure_initial, color=:blue, lw=2, label="Term Structure")
+plot!(times, sim_curves', lw=0.1, legend=false, alpha=0.5)
+
+
+# Calculate standard deviation of the logreturn of shocks, scaled to annualised volatility.
+vol_sim = vec(std(log.(shocks), dims=1) * sqrt(1/tau))
+
+
+# Plot input and simulated volatility
+plot(times, vol, lw=1, legend=true, label = "Input Volatility")
+plot!(times, vol_sim, lw=1, color=:red, alpha = 0.5, label="Simulated Volatility")
+
+# Validate consistency between the volatility model and the simulation volatility
+all(isapprox.(vol, vol_sim, atol=1E-2))
