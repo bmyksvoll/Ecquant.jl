@@ -20,7 +20,17 @@ c = 0.1
 
 vol_model = BSRModel(a,b,c)
 
-n_steps = length(times)
+#= To improve the random number generation in  simulation,
+
+ - Set a Seed for Reproducibility: Setting a seed ensures that 
+ the random number generation is reproducible,  which is useful
+ for debugging and testing.
+ - Use MersenneTwister for Better Performance: The MersenneTwister 
+ random number generator is a good choice for simulations due to
+ its performance and quality.
+ =#
+
+ n_steps = length(times)
 n_sims = 10000
 f = σ.(Ref(vol_model), t, tau, times)
 
@@ -31,9 +41,8 @@ rng = MersenneTwister(seed)
 # Generate independent random samples
 w = randn(rng, n_sims, n_steps)
 
-
 # Initialize the paths matrix
-#Z = zeros(n_sims, n_steps)
+
 P = ones(n_sims, n_steps)
 
 # Iterate through each time step
