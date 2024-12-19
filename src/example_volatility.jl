@@ -33,6 +33,7 @@ all(isapprox.(vol, vol_instant,atol=1e-2))
 plot(times, vol_instant, label="Instantaneous Volatility", xlabel="Time (t)", ylabel="Volatility (σ)", title="Instantaneous Volatility over Time")
 plot!(times, vol)
 
+
 f1 = σ₁.(Ref(model), 0.0, tau, times)
 f2 = σ₂.(Ref(model), 0.0, tau, times)
 f3 = σ₃.(Ref(model), times)

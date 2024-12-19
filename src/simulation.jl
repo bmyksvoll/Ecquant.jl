@@ -12,6 +12,7 @@ struct BSRPathSimulation
     fc::ForwardCurve
     vol::BSRModel
     n_sims::Int
+    n_steps::Int
     t::Float64
     tau::Float64
     times::Vector{Float64}
@@ -41,15 +42,26 @@ end
 
 
 function simulate_singlefactor_path(sim::BSRPathSimulation)
+    # Set a seed for reproducibility
+    seed = 1234
+    rng = MersenneTwister(seed)
+
     # Generate independent random samples
-    w = randn(sim.n_sims, sim.n_paths)
-
-    f = σ.(Ref(sim.vol), sim.t, sim.tau, sim.times)
-
+    w = randn(rng, sim.n_sims, sim.n_steps)
     
-    Z = exp.(w * sqrt(sim.tau) .* f' .- 0.5 .* f'.^2 .* sim.tau)
+    # Calculate the volatility term structure
+    vol = σ.(Ref(vol_model), t, tau, times)
     
-    cumZ = cumprod(Z, dims=2)
+    # Initialize the paths matrix
+    P = ones(sim.n_sims, sim.n_steps)
 
-    return cumZ
+    # Iterate through each time step
+    for (i, t) in enumerate(sim.times)
+        Z = exp.(w[:, i] * sqrt(sim.tau) .* vol' .- 0.5 .* vol'.^2 .* sim.tau)
+        P[:, i:end] .= P[:, i:end] .* Z[:, 1:end-i+1]
+    end
+
+    return P
+
+    #sim_paths = P .* fc'
 end

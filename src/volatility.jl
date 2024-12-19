@@ -19,7 +19,6 @@ function σ(model::BSRModel, t::Float64, T::Float64)
     return model.a / (T - t + model.b) + model.c
 end
 
-
 function σ(model::BSRModel, t::Float64, tau::Float64, T::Float64)
     """Bjerksund Stensland Rasmussen point volatility"""
     function variance_integral(model::BSRModel, s::Float64, T::Float64)
