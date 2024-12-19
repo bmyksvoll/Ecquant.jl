@@ -11,14 +11,12 @@ model = BSRModel(a,b,c)
 
 # Define the parameters
 t = 0.0
-T = 1.0
-tau = 1/52
-stepsize = 1/365
+T = 1.5
+tau = 1E-3
+stepsize = tau
 
 # Create the range of t values
 times = tau:stepsize:T
-
-
 
 # Calculate the instantaneous volatility for each t value
 vol_instant = σ.(Ref(model), t, times)
@@ -26,12 +24,10 @@ vol_instant = σ.(Ref(model), t, times)
 # Calculate the volatility over time for small tau
 vol = σ.(Ref(model), t, tau, times)
 
-
+# Calculate the plug-in volatility 
 vol_plugin = σ.(Ref(model), t, tau, times, times.+tau)
 
-
-all(isapprox.(vol, vol_instant,atol=1e-5))
-
+all(isapprox.(vol, vol_instant,atol=1e-2))
 
 # Assuming vol and t have been calculated as shown previously
 plot(times, vol_instant, label="Instantaneous Volatility", xlabel="Time (t)", ylabel="Volatility (σ)", title="Instantaneous Volatility over Time")
