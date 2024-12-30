@@ -1,6 +1,5 @@
 using Plots
-
-include("volatility.jl")
+using Ecquant
 
 a = 0.26
 b = 0.33

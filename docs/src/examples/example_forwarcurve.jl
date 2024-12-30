@@ -1,13 +1,13 @@
 # %%
-
 using Dates
 using DataFrames
-using XLSX
+#using XLSX
 using Plots
 using Polynomials
 using CSV
+using Ecquant
 
-include("forwardcurve.jl")
+
 
 
 trade_date = DateTime(2021, 6, 17)

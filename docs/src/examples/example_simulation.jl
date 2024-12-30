@@ -1,12 +1,10 @@
-using XLSX
+#using XLSX
 using Plots
-using Random
+using Ecquant
+#using Random
 #using Distributions
-using Statistics
+#using Statistics
 
-include("volatility.jl")
-include("forwardcurve.jl")
-include("simulation.jl")
 
 trade_date = DateTime(2021, 6, 17)
 
@@ -72,17 +70,17 @@ shocks = simulate_multifactor(sim)
 sim_curves = shocks .* term_structure_initial'
 
 # Plot the initial term structure
-plot(times, term_structure_initial, color=:blue, lw=2, label="Term Structure")
-plot!(times, sim_curves', lw=0.1, legend=false, alpha=0.5)
-
+plot1 = plot(times, term_structure_initial, color=:blue, lw=2, label="Term Structure")
+plot!(plot1, times, sim_curves', lw=0.1, legend=false, alpha=0.5)
 
 # Calculate standard deviation of the logreturn of shocks, scaled to annualised volatility.
 vol_sim = vec(std(log.(shocks), dims=1) * sqrt(1/tau))
 
-
-# Plot input and simulated volatility
-plot(times, vol, lw=1, legend=true, label = "Input Volatility")
-plot!(times, vol_sim, lw=1, color=:red, alpha = 0.5, label="Simulated Volatility")
-
 # Validate consistency between the volatility model and the simulation volatility
 all(isapprox.(vol, vol_sim, atol=1E-2))
+
+# Plot input and simulated volatility
+plot2 = plot(times, vol, lw=1, legend=true, label = "Input Volatility")
+plot!(plot2, times, vol_sim, lw=1, color=:red, alpha = 0.5, label="Simulated Volatility")
+
+plot(plot1, plot2, layout=(2,1), size=(800, 800))

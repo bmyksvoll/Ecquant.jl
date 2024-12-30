@@ -1,11 +1,5 @@
 # Module for maximum smoothness forward curve
-using Dates
-using Plots
-using LinearAlgebra
-using Polynomials
-using DataFrames
-
-include("smoothspline.jl")
+#include("smoothspline.jl")
 
 const DAYS_PER_YEAR = 365
 
@@ -36,5 +30,14 @@ function price(forward_curve::ForwardCurve, start_time::Float64, end_time::Float
 end
 
 function plot_curve(forward_curve::ForwardCurve)
-	plot_spline(forward_curve.spline)
+	plt = plot_spline(forward_curve.spline)
+	# Iterate over the start_date, end_date, and price using zip and enumerate
+	for (i, (start_time, end_time, price)) in enumerate(zip(forward_curve.instruments.start_time, forward_curve.instruments.end_time, forward_curve.instruments.price))
+		name = forward_curve.instruments.name[i]
+		# Plot a horizontal line for the price of the instrument
+		plot!(plt, [start_time, end_time], [price, price], label = name, lw = 2)
+	end
+
+	# Display the plot
+	display(plt)
 end

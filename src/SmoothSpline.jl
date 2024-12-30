@@ -181,15 +181,5 @@ function plot_spline(spline::SmoothSpline, resolution::Int = 1000)
 		# Plot the polynomial over the interval
 		plot!(xs, ys)
 	end
-
-	# Iterate over the start_date, end_date, and price using zip and enumerate
-	for (i, (start_time, end_time, price)) in enumerate(zip(instruments.start_time, instruments.end_time, instruments.price))
-		name = instruments.name[i]
-		# Plot a horizontal line for the price of the instrument
-		plot!(plt, [start_time, end_time], [price, price], label = name, lw = 2)
-	end
-
-	# Display the plot
-	display(plt)
-
+	return plt
 end

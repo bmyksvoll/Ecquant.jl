@@ -1,12 +1,13 @@
 # NEED TO CHECK  TIME INDEX CONSISTENCY BETWEEN PLUG-IN AND SIMULATION
-using XLSX
+#using XLSX
+using Dates: DateTime
+using StatsBase: std, mean
+using DataFrames
 using Plots
 using Random
-using Statistics
+#using Statistics
+using Ecquant
 
-include("volatility.jl")
-include("forwardcurve.jl")
-include("simulation.jl")
 
 trade_date = DateTime(2021, 6, 17)
 
@@ -60,10 +61,24 @@ vol_plugin = σ.(Ref(vol_model), t, times.-Δ, times, times.+Δ)
 n_steps = length(times)
 n_sims = 10000
 
-sim_model = BSRPathSimulation(fc_model, vol_model, n_sims, n_steps, t, tau, times)
+# Set a seed for reproducibility
+seed = 1234
+rng = MersenneTwister(seed)
 
-P = simulate_singlefactor_path(sim_model)
+# Generate independent random samples
+w = randn(rng, n_sims, n_steps)
 
+# Initialize the paths matrix
+
+P = ones(n_sims, n_steps)
+# Iterate through each time step
+for (i, t) in enumerate(times)
+    Z = exp.(w[:, i] * sqrt(tau) .* vol' .- 0.5 .* vol'.^2 .* tau)
+    P[:, i:end] .= P[:, i:end] .* Z[:, 1:end-i+1]
+end
+
+#vol_sim = std(log.(P), dims=1) .* sqrt.(1.0./times)'
+#sim = BSRPathSimulation(fc, vol_model, n_sims, n_steps, t, tau, times)
 sim_paths = P .* fc'
 vol_sim = std(log.(sim_paths), dims=1) .* sqrt.(1.0./times)'
 mean_sim = mean(sim_paths, dims=1)
@@ -84,5 +99,7 @@ plot!(plot2, times, vol_sim', lw=2, label="Simulation Volatility")
 plot3 = plot(times, fc, lw=2, label="Forward Curve", title="Validation of No Arbitrage", size=(800, 500))
 plot!(plot3, times, mean_sim', lw=2, label="Simulation Volatility")
 
+
 # Display the plots
 plot(plot1, plot2, plot3, layout=(3, 1), size=(800, 1000))
+

@@ -1,31 +1,20 @@
 name = "Ecquant"
-uuid = "c4e2bc85-6b8e-40be-a6eb-cfea8c73ef5a"
-authors = ["Bjarte Myksvoll"]
-version = "1.0.0-DEV"
+uuid = "12345678-1234-1234-1234-123456789abc"
+authors = ["Your Name <your.email@example.com>"]
+version = "0.1.0"
 
 [deps]
 BlockDiagonals = "0a1fb500-61f7-11e9-3c65-f5ef3456f9f0"
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PolyLog = "85e3b03c-9856-11eb-0374-4dc1f8670e7f"
 Polynomials = "f27b6e38-b328-58d1-80ce-0feddd5e7a45"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
-XLSX = "fdbf4ff8-1666-58a4-91e7-1b58723a45e0"
+StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 
 [compat]
-BlockDiagonals = "0.1.42"
-CSV = "0.10.15"
-DataFrames = "1.7.0"
-Plots = "1.40.9"
-PolyLog = "2.5.0"
-Polynomials = "4.0.12"
-Revise = "3.6.4"
-XLSX = "0.10.4"
-julia = "1.6.7"
-
-[extras]
-Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
-
-[targets]
-test = ["Test"]
+LinearAlgebra = "1.11.0"

@@ -50,7 +50,7 @@ function simulate_singlefactor_path(sim::BSRPathSimulation)
     w = randn(rng, sim.n_sims, sim.n_steps)
     
     # Calculate the volatility term structure
-    vol = σ.(Ref(vol_model), t, tau, times)
+    vol = σ.(Ref(sim.vol), sim.t,sim.tau, sim.times)
     
     # Initialize the paths matrix
     P = ones(sim.n_sims, sim.n_steps)

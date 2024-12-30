@@ -1,5 +1,3 @@
-using PolyLog:reli2
-
 struct BSRModel
     a::Float64
     b::Float64
