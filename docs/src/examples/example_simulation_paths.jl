@@ -1,11 +1,12 @@
 # NEED TO CHECK  TIME INDEX CONSISTENCY BETWEEN PLUG-IN AND SIMULATION
 #using XLSX
-using Plots
-using Random
-using Ecquant
 using Dates: DateTime
 using StatsBase: std, mean
 using DataFrames
+using Plots
+using Random
+#using Statistics
+using Ecquant
 
 trade_date = DateTime(2021, 6, 17)
 

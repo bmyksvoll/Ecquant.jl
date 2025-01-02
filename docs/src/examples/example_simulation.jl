@@ -1,9 +1,10 @@
 #using XLSX
 using Plots
 using Ecquant
-#using Random
-#using Distributions
-#using Statistics
+using Dates: DateTime
+using DataFrames
+using StatsBase: std, mean
+
 
 
 trade_date = DateTime(2021, 6, 17)

@@ -1,6 +1,4 @@
 # Module for maximum smoothness forward curve
-#include("smoothspline.jl")
-
 const DAYS_PER_YEAR = 365
 
 struct ForwardCurve

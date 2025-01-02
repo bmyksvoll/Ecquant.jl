@@ -1,4 +1,6 @@
 # Define the Simulation class
+
+
 struct BSRSimulation
     fc::ForwardCurve
     vol::BSRModel

@@ -1,9 +1,4 @@
 # Module for maximum smoothness forward curve
-using Dates
-using Plots
-using LinearAlgebra
-using Polynomials
-using BlockDiagonals
 
 
 struct SmoothSpline

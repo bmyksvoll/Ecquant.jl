@@ -40,9 +40,9 @@ function σ(model::BSRModel, t::Float64, tau::Float64, T1::Float64, T2::Float64)
     applied for flow delivery
     """
     X(s) = model.b + 0.5 * (T2 + T1) - s
+    alpha = 0.5 * (T2 - T1)
 
     integral1(x) = begin
-        alpha = 0.5 * (T2 - T1)
         (x + alpha) * log(x + alpha)^2 -
         2 * (x + alpha) * log(x + alpha) * log(x - alpha) +
         4 * alpha * log(2 * alpha) * log((x - alpha) / (2 * alpha)) -
@@ -51,7 +51,6 @@ function σ(model::BSRModel, t::Float64, tau::Float64, T1::Float64, T2::Float64)
     end
 
     integral2(x) = begin
-        alpha = 0.5 * (T2 - T1)
         (x + alpha) * log(x + alpha) - (x - alpha) * log(x - alpha)
     end
 

@@ -1,7 +1,5 @@
-# %%
 using Dates
 using DataFrames
-#using XLSX
 using Plots
 using Polynomials
 using CSV

@@ -14,7 +14,9 @@ PolyLog = "85e3b03c-9856-11eb-0374-4dc1f8670e7f"
 Polynomials = "f27b6e38-b328-58d1-80ce-0feddd5e7a45"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
+Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 
 [compat]
 LinearAlgebra = "1.11.0"
+Statistics = "1.11.1"

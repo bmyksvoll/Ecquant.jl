@@ -5,7 +5,6 @@ using StatsBase: std, mean
 using DataFrames
 using Plots
 using Random
-#using Statistics
 using Ecquant
 
 
