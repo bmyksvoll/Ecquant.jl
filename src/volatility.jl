@@ -1,9 +1,9 @@
-struct BSRModel
+struct BSRVolatilityModel
     a::Float64
     b::Float64
     c::Float64
 
-    BSRModel(a=0.9, b=0.6, c=0.1) = new(a, b, c)
+    BSRVolatilityModel(a=0.9, b=0.6, c=0.1) = new(a, b, c)
 end
 
 
@@ -11,15 +11,15 @@ function spence(z::Float64)
     return reli2(1-z)
 end
 
-function σ(model::BSRModel, t::Float64, T::Float64)
+function σ(model::BSRVolatilityModel, t::Float64, T::Float64)
     """Instantaneous volatility function"""
      @assert T >= t "T must be greater than or equal to t"
     return model.a / (T - t + model.b) + model.c
 end
 
-function σ(model::BSRModel, t::Float64, tau::Float64, T::Float64)
+function σ(model::BSRVolatilityModel, t::Float64, tau::Float64, T::Float64)
     """Bjerksund Stensland Rasmussen point volatility"""
-    function variance_integral(model::BSRModel, s::Float64, T::Float64)
+    function variance_integral(model::BSRVolatilityModel, s::Float64, T::Float64)
         """Equation (7) in BS 2010"""
          @assert T >= s "T must be greater than or equal to s"
         variance = (model.a^2 / (T - s + model.b) -
@@ -34,7 +34,7 @@ function σ(model::BSRModel, t::Float64, tau::Float64, T::Float64)
     return sqrt(var)
 end
 
-function σ(model::BSRModel, t::Float64, tau::Float64, T1::Float64, T2::Float64)
+function σ(model::BSRVolatilityModel, t::Float64, tau::Float64, T1::Float64, T2::Float64)
     """
     Bjerksund Stensland Rasmussen plug-in volatility
     applied for flow delivery
@@ -67,7 +67,7 @@ end
 
 
 
-function σ₁(model::BSRModel, t::Float64, tau::Float64, T::Float64)
+function σ₁(model::BSRVolatilityModel, t::Float64, tau::Float64, T::Float64)
     """First factor volatility"""
     upper = first_factor_integral(model, tau, T)
     lower = first_factor_integral(model, t, T)
@@ -75,7 +75,7 @@ function σ₁(model::BSRModel, t::Float64, tau::Float64, T::Float64)
     return sqrt(variance)
 end
 
-function σ₂(model::BSRModel, t::Float64, tau::Float64, T::Float64)
+function σ₂(model::BSRVolatilityModel, t::Float64, tau::Float64, T::Float64)
     """Second factor volatility"""
     upper = second_factor_integral(model, tau, T)
     lower = second_factor_integral(model, t, T)
@@ -83,18 +83,30 @@ function σ₂(model::BSRModel, t::Float64, tau::Float64, T::Float64)
     return sqrt(variance)
 end
 
-function σ₃(model::BSRModel, T)
+function σ₃(model::BSRVolatilityModel, T)
     """Third factor volatility"""
     return model.c
 end
 
-function first_factor_integral(model::BSRModel, s::Float64, T::Float64)
+function first_factor_integral(model::BSRVolatilityModel, s::Float64, T::Float64)
     """First volatility factor function"""
     return model.a^2 / (T - s + model.b)
 end
 
-function second_factor_integral(model::BSRModel, s::Float64, T::Float64)
+function second_factor_integral(model::BSRVolatilityModel, s::Float64, T::Float64)
     """Second volatility factor integral function"""
     return -2 * model.a * model.c * log(T - s + model.b)
 end
 
+function calibrate_bsr_volatility(sigma_0, sigma_mid, sigma_inf, t_mid)
+    # Calculate c directly from the value of sigma at infinity
+    c = sigma_inf
+
+    # Calculate b using the derived formula
+    b = (sigma_mid - sigma_inf) * t_mid / (sigma_0 - sigma_mid)
+
+    # Calculate a using the derived formula
+    a = b * (sigma_0 - sigma_inf)
+
+    return a, b, c
+end

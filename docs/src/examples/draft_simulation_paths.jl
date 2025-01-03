@@ -42,7 +42,7 @@ a = 0.26
 b = 0.33
 c = 0.1
 
-vol_model = BSRModel(a,b,c)
+vol_model = BSRVolatilityModel(a,b,c)
 vol = σ.(Ref(vol_model), t, tau, times)
 vol_plugin = σ.(Ref(vol_model), t, times.-Δ, times, times.+Δ)
 

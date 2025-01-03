@@ -173,8 +173,8 @@ function plot_spline(spline::SmoothSpline, resolution::Int = 1000)
 		xs = range(interval_start, stop = interval_end, length = 100)
 		ys = p.(xs)
 
-		# Plot the polynomial over the interval
-		plot!(xs, ys)
+		# Plot the polynomial over the interval without names
+		plot!(xs, ys, label = "")
 	end
 	return plt
 end

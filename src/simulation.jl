@@ -3,7 +3,7 @@
 
 struct BSRSimulation
     fc::ForwardCurve
-    vol::BSRModel
+    vol::BSRVolatilityModel
     n_sims::Int
     t::Float64
     tau::Float64
@@ -12,7 +12,7 @@ end
 
 struct BSRPathSimulation
     fc::ForwardCurve
-    vol::BSRModel
+    vol::BSRVolatilityModel
     n_sims::Int
     n_steps::Int
     t::Float64

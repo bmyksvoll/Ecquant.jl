@@ -20,11 +20,9 @@ include("volatility.jl")
 include("simulation.jl")
 
 # Export functions and types that should be accessible to users of the package
-export BSRModel, ForwardCurve, simulate_singlefactor, simulate_multifactor, simulate_singlefactor_path
-export BSRSimulation, BSRPathSimulation
-export smoothspline, forwardcurve, volatility, simulation,  plot_curve
-export σ, σ₁, σ₂, σ₃, price
+export ForwardCurve, price, plot_curve
+export BSRVolatilityModel,  σ, σ₁, σ₂, σ₃
+export BSRSimulation, BSRPathSimulation, simulate_singlefactor, simulate_multifactor, simulate_singlefactor_path
 
-# Define any additional functions or types here if needed
 
 end # module Ecquant

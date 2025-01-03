@@ -28,11 +28,10 @@ using Ecquant
 
 
     # Create an instance of ForwardCurve
-    forward_curve = ForwardCurve("USD", "MWh", trade_date, instruments)
-
-
+    forward_curve = ForwardCurve("EUR", "MWh", trade_date, instruments)
     instruments.calc_price = price.(Ref(forward_curve.spline), instruments.start_time, instruments.end_time)
 
+    # Test No-Arbitrage condition: the calculated price should be equal to the market price
     @test all(isapprox.(instruments.price, instruments.calc_price, atol=1e-10))
 
 end
