@@ -45,7 +45,7 @@ sigma_0 = 0.9
 t_mid = 0.5  
 sigma_mid = 0.17 
 sigma_inf = 0.1  
-a, b, c = calibrate_sigma(sigma_0, sigma_mid, sigma_inf, t_mid)
+a, b, c = calibrate(sigma_0, sigma_mid, sigma_inf, t_mid)
 
 
 vol_model = BSRVolatilityModel(a,b,c)
