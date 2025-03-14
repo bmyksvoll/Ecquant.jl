@@ -91,3 +91,4 @@ plot!(plot3, times, mean_sim', lw=2, label="Simulation Mean")
 
 # Display the plots
 plot(plot1, plot2, plot3, layout=(3, 1), size=(800, 1000))
+#histogram(sim_paths[:,10], lw=1, legend=false, alpha=0.6, title="Price Distribution", size=(800, 500))

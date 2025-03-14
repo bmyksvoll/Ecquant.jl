@@ -98,7 +98,8 @@ function second_factor_integral(model::BSRVolatilityModel, s::Float64, T::Float6
     return -2 * model.a * model.c * log(T - s + model.b)
 end
 
-function calibrate_bsr_volatility(sigma_0, sigma_mid, sigma_inf, t_mid)
+
+function calibrate_sigma(sigma_0, sigma_mid, sigma_inf, t_mid)
     # Calculate c directly from the value of sigma at infinity
     c = sigma_inf
 
